@@ -5,10 +5,17 @@ const longoBt = document.querySelector('.app__card-button--longo');
 const banner = document.querySelector('.app__image');
 const titulo = document.querySelector('.app__title');
 const botoes = document.querySelectorAll('.app__card-button');
+const startPauseBt = document.querySelector('#start-pause');
 const musicaFocoInput = document.querySelector('#alternar-musica');
-const musica = new Audio('./sons/luna-rise-part-one.mp3')
-musica.loop = true
+const musica = new Audio('./sons/luna-rise-part-one.mp3');
+const somPause = new Audio('./sons/pause.mp3')
+const somPlay = new Audio('./sons/play.wav')
+const somTempoFinalizado = new Audio('./sons/beep.mp3')
 
+let tempoDecorridoEmSegundos = 5
+let intervaloId = null
+
+musica.loop = true
 musicaFocoInput.addEventListener('change', () =>{
    if(musica.paused) {
       musica.play()
@@ -19,7 +26,6 @@ musicaFocoInput.addEventListener('change', () =>{
 })
 
 banner.src = './imagens/foco.png'
-
 focoBt.addEventListener('click', ()=> {
    alteraContexto('foco')
    focoBt.classList.add('active')
@@ -65,3 +71,34 @@ function alteraContexto(contexto){
          break;
     }
 }
+
+const contagemRegressiva = () =>{
+   if (tempoDecorridoEmSegundos <= 0){
+      somTempoFinalizado.play()
+      zerar()
+      alert('Tempo finalizado')
+      
+      return
+   }
+   tempoDecorridoEmSegundos -= 1
+   console.log(`Temporizador ${tempoDecorridoEmSegundos}`)
+}
+
+startPauseBt.addEventListener('click', iniciarOuPausar);
+
+function iniciarOuPausar(){
+   
+   if (intervaloId){
+      somPause.play()
+      zerar()
+      return
+   }
+   somPlay.play()
+   intervaloId = setInterval(contagemRegressiva, 1000)
+}
+
+function zerar(){
+   clearInterval(intervaloId)
+   intervaloId = null
+}
+
